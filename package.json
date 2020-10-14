@@ -1,0 +1,17 @@
+{
+  "name": "vite__svg_bubble_project",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.0.0-rc.1"
+  },
+  "devDependencies": {
+    "vite": "^1.0.0-rc.1",
+    "@antfu/eslint-config-vue": "^0.2.14",
+    "eslint": "^7.5.0",
+    "@vue/compiler-sfc": "^3.0.0-rc.1"
+  }
+}
