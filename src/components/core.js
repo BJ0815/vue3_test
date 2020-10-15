@@ -1,67 +1,82 @@
-import { computed, reactive, ref, watchEffect } from "vue";
+import { onBeforeUpdate, onMounted, onUnmounted, onUpdated, reactive, ref, watch } from "vue";
 
-const round = Math.round,
-  abs = Math.abs,
-  pow = Math.pow,
-  sqrt = Math.sqrt,
-  PI = Math.PI,
-  sin = Math.sin,
-  cos = Math.cos,
-  u = 50,
-  vb_w = ~~1000,
-  vb_h = ~~1000,
-  vb_x = ~~-500,
-  vb_y = ~~-500;
+import Stats from "stats.js";
 
-const rand = function (max, min) {
-  const b = !max && max !== 0 ? 1 : max,
-    a = min || 0;
+const stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 
-  return a + (b - a) * Math.random();
-};
+const MAX_X = 800;
+const MAX_Y = 600;
+
 export const useRandomBubble = () => {
   const total = ref(100);
+  const elements = ref(
+    Array(+total.value)
+      .fill(0)
+      .map(() => {
+        return reactive(new Particle());
+      })
+  );
+  let anime = null;
+  const cancelAnime = () => anime && window.cancelAnimationFrame(anime);
+  const move = () => {
+    stats.begin();
+    for (let i = 0; i < +total.value; i++) {
+      const particles = elements.value[i];
+      if (particles) {
+        if (particles.hitsWallX()) particles.v.x *= -1;
+        if (particles.hitsWallY()) particles.v.y *= -1;
+        particles.p.y += particles.v.y;
+        particles.p.x += particles.v.x;
+      }
+    }
+    stats.end();
+  };
 
-  const elements = computed(() => Array(+total.value).fill(0))
+  const render = () => {
+    cancelAnime();
+    anime = window.requestAnimationFrame(render);
+    move();
+  };
+  watch(total, (count) => {
+    elements.value = Array(+count)
+      .fill(0)
+      .map(() => {
+        return reactive(new Particle());
+      });
+    render();
+  });
+
+  onMounted(() => {
+    render();
+    document.body.appendChild(stats.dom);
+  });
+  onUnmounted(() => {
+    cancelAnime();
+  });
 
   return {
     total,
-    elements
+    elements,
   };
 };
 
-export const Particle = function (r, p, m, v) {
-  var a = PI * rand(2),
-    va = rand(10, 3) * u;
-
+export const Particle = function () {
   this.r = 3;
-  this.p = p || {
-    x: round(rand(vb_w - 4 * this.r) - vb_w / 2),
-    y: round(rand(vb_h - 4 * this.r) - vb_h / 2),
+  this.p = {
+    x: Math.random() * MAX_X,
+    y: Math.random() * MAX_Y,
   };
-  this.m = m || rand(10, 1);
-  this.v = v || {
-    x: va * cos(a),
-    y: va * sin(a),
-  };
-
-  this.d = function (b) {
-    return sqrt(pow(this.p.x - b.p.x, 2) + pow(this.p.y - b.p.y, 2));
-  };
-
-  this.dx = function (x) {
-    return abs(this.p.x - x);
-  };
-
-  this.dy = function (y) {
-    return abs(this.p.y - y);
+  this.v = {
+    x: 4 * Math.random() - 2,
+    y: 4 * Math.random() - 2,
   };
 
   this.hitsWallX = function () {
-    return this.dx(vb_x) <= 2 * this.r || this.dx(vb_w + vb_x) <= 2 * this.r;
+    return this.p.x > MAX_X || this.p.x < 0;
   };
 
   this.hitsWallY = function () {
-    return this.dy(vb_y) <= 2 * this.r || this.dy(vb_h + vb_y) <= 2 * this.r;
+    return this.p.y > MAX_Y || this.p.y < 0;
   };
 };

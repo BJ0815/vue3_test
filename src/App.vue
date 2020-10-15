@@ -1,18 +1,14 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Vue 3.0" />
-  <BaseSvgPlatform></BaseSvgPlatform>
+  <h1>Vue 3.0</h1>
+  <TextCase></TextCase>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import BaseSvgPlatform from "./components/BaseSvgPlatform.vue";
-
+import TextCase from "./components/TextCase.vue";
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    BaseSvgPlatform
+    TextCase
   }
 }
 </script>
