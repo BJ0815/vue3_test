@@ -22,9 +22,7 @@ const rand = function (max, min) {
 export const useRandomBubble = () => {
   const total = ref(100);
 
-  const elements = computed(() => Array(+total.value).fill(0).map(() => {
-    return reactive(new Particle());
-  }))
+  const elements = computed(() => Array(+total.value).fill(0))
 
   return {
     total,

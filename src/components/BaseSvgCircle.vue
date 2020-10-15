@@ -4,16 +4,10 @@
 
 <script>
 import { defineComponent, onMounted, reactive, onUnmounted, ref } from "vue";
+import { Particle } from "./core";
 export default defineComponent({
-  props: {
-    item: {
-      type: Object,
-      require: true,
-    },
-  },
   setup (props) {
-    const particles = reactive(props.item)
-    const id = ref(null)
+    const particles = reactive(new Particle())
     const move = function () {
         particles.p.x += Math.round(particles.v.x / 60);
         particles.p.y += Math.round(particles.v.y / 60);
@@ -25,19 +19,10 @@ export default defineComponent({
           particles.v.y *= -1;
         }
 
-      id.value = requestAnimationFrame(move);
     };
-
-    onMounted(() => {
-      move();
-    });
-
-    onUnmounted(() => {
-      if(id.value) cancelAnimationFrame(id.value)
-    })
-
     return {
       particles,
+      move
     }
   },
 });
