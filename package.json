@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build --base /vue3_test --outDir docs --assetsDir assets"
   },
   "dependencies": {
     "stats.js": "^0.17.0",
